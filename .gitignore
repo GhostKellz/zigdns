@@ -1,0 +1,35 @@
+# Zig build artifacts
+zig-cache/
+zig-out/
+
+# VSCode settings and other IDE files
+.vscode/
+.idea/
+*.code-workspace
+
+# Vim/Neovim swap files
+*.swp
+*.swo
+
+# macOS metadata
+.DS_Store
+
+# Logs
+*.log
+
+# OS junk
+Thumbs.db
+
+# Other editor settings
+*.iml
+
+# Backup files
+*~
+
+# Tests output (if any)
+test-output/
+
+# Node/npm junk (just in case you experiment)
+node_modules/
+
+

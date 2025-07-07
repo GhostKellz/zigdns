@@ -1,0 +1,177 @@
+.TH ZDNS 1 "2024-01-01" "ZigDNS 1.0.0" "User Commands"
+.SH NAME
+zdns \- Advanced DNS resolver with Web3 support and post-quantum cryptography
+.SH SYNOPSIS
+.B zdns
+[\fIOPTIONS\fR] [\fICOMMAND\fR] [\fIARGS\fR]
+.SH DESCRIPTION
+ZigDNS is a modern DNS resolver written in Zig that combines traditional DNS functionality with cutting-edge features including Web3 domain resolution, post-quantum cryptography, and advanced security features.
+.SH COMMANDS
+.TP
+.B help, -h, --help
+Show comprehensive help information
+.TP
+.B version, -v, --version
+Display version information and build details
+.TP
+.B start, run
+Start the DNS server (default command)
+.TP
+.B query \fIDOMAIN\fR
+Query a specific domain name
+.TP
+.B flush, clear-cache
+Clear the DNS cache
+.TP
+.B stats, status
+Show server statistics and performance metrics
+.TP
+.B test-web3, test
+Test Web3 domain resolution functionality
+.TP
+.B config
+Show current configuration settings
+.TP
+.B set \fIKEY\fR \fIVALUE\fR
+Set configuration value
+.SH OPTIONS
+.TP
+.B --verbose, -v
+Enable verbose output with detailed information
+.TP
+.B --quiet, -q
+Suppress non-error output for minimal logging
+.TP
+.B --daemon, -d
+Run the server as a background daemon
+.TP
+.B --port=\fIPORT\fR
+Set the DNS server port (default depends on protocol)
+.TP
+.B --protocol=\fIPROTOCOL\fR
+Set DNS protocol: udp, dot, doh, doq (default: udp)
+.TP
+.B --upstream=\fISERVER\fR
+Set the upstream DNS server (default: 1.1.1.1:53)
+.TP
+.B --no-web3
+Disable Web3 domain resolution
+.TP
+.B --no-blocklist
+Disable ad/malware blocking
+.SH PROTOCOLS
+.TP
+.B UDP (port 53)
+Traditional DNS over UDP - fastest but unencrypted
+.TP
+.B DoT (port 853)
+DNS-over-TLS - encrypted DNS with TLS 1.3
+.TP
+.B DoH (port 443)
+DNS-over-HTTPS - encrypted DNS over HTTPS
+.TP
+.B DoQ (port 853)
+DNS-over-QUIC - next-generation encrypted DNS with post-quantum cryptography
+.SH WEB3 DOMAINS
+.TP
+.B .eth
+Ethereum Name Service (ENS) domains
+.TP
+.B .crypto, .nft, .blockchain, .bitcoin, .wallet, .888, .dao, .x
+Unstoppable Domains
+.TP
+.B .ghost, .zns
+GhostChain ZNS domains
+.TP
+.B .cns
+CNS QUIC domains
+.SH EXAMPLES
+.TP
+Start basic UDP DNS server:
+.B zdns start
+.TP
+Start DNS-over-TLS server:
+.B zdns start --protocol=dot
+.TP
+Start on custom port:
+.B zdns start --port=5353
+.TP
+Query traditional domain:
+.B zdns query google.com
+.TP
+Query ENS domain:
+.B zdns query vitalik.eth
+.TP
+Test Web3 functionality:
+.B zdns test-web3
+.TP
+Run as daemon with verbose logging:
+.B zdns start --daemon --verbose
+.SH FILES
+.TP
+.B /etc/zdns/config.toml
+Main configuration file
+.TP
+.B /etc/zdns/certs/
+Directory for TLS/QUIC certificates
+.TP
+.B /var/lib/zdns/
+ZigDNS runtime data directory
+.TP
+.B /usr/lib/systemd/system/zdns.service
+Systemd service file
+.SH ENVIRONMENT
+.TP
+.B ZDNS_UPSTREAM
+Default upstream DNS server
+.TP
+.B ZDNS_PORT
+Default port number
+.TP
+.B ZDNS_PROTOCOL
+Default protocol (udp, dot, doh, doq)
+.TP
+.B ZDNS_VERBOSE
+Enable verbose mode (set to "1")
+.TP
+.B ZDNS_NO_WEB3
+Disable Web3 features (set to "1")
+.SH EXIT STATUS
+.TP
+.B 0
+Success
+.TP
+.B 1
+General error (invalid arguments, startup failure)
+.TP
+.B 2
+Permission denied (typically port binding)
+.TP
+.B 3
+Configuration error
+.TP
+.B 4
+Network error
+.SH SECURITY
+ZigDNS includes several security features:
+.IP \(bu 2
+Ad/malware blocking with multiple filter lists
+.IP \(bu 2
+Post-quantum cryptography (ML-KEM-768 + ML-DSA-65)
+.IP \(bu 2
+Secure DNS caching with signature verification
+.IP \(bu 2
+TLS 1.3 support for encrypted protocols
+.IP \(bu 2
+DNSSEC validation
+.SH AUTHOR
+Written by the ZigDNS team.
+.SH REPORTING BUGS
+Report bugs to: https://github.com/your-username/zigdns/issues
+.SH COPYRIGHT
+Copyright © 2024 ZigDNS Team. This is free software; see the source for copying conditions.
+.SH SEE ALSO
+.BR systemd-resolved (8),
+.BR dig (1),
+.BR nslookup (1),
+.BR host (1)

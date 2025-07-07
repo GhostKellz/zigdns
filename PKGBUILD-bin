@@ -1,0 +1,47 @@
+# Maintainer: Your Name <your.email@example.com>
+pkgname=zdns-bin
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Advanced DNS resolver with Web3 support and post-quantum cryptography (binary release)"
+arch=('x86_64' 'aarch64')
+url="https://github.com/your-username/zigdns"
+license=('MIT')
+depends=('glibc')
+provides=('zdns')
+conflicts=('zdns' 'zdns-git')
+backup=('etc/zdns/config.toml')
+install=zdns.install
+source_x86_64=("$url/releases/download/v$pkgver/zdns-$pkgver-linux-x86_64.tar.gz")
+source_aarch64=("$url/releases/download/v$pkgver/zdns-$pkgver-linux-aarch64.tar.gz")
+sha256sums_x86_64=('SKIP')
+sha256sums_aarch64=('SKIP')
+
+package() {
+    # Install binary
+    install -Dm755 "$srcdir/zdns" "$pkgdir/usr/bin/zdns"
+    
+    # Install systemd service
+    install -Dm644 "$srcdir/zdns.service" "$pkgdir/usr/lib/systemd/system/zdns.service"
+    
+    # Install configuration
+    install -Dm644 "$srcdir/config.toml" "$pkgdir/etc/zdns/config.toml"
+    
+    # Install documentation
+    install -Dm644 "$srcdir/README.md" "$pkgdir/usr/share/doc/$pkgname/README.md"
+    install -Dm644 "$srcdir/DOCS.md" "$pkgdir/usr/share/doc/$pkgname/DOCS.md"
+    install -Dm644 "$srcdir/COMMANDS.md" "$pkgdir/usr/share/doc/$pkgname/COMMANDS.md"
+    
+    # Install man page
+    install -Dm644 "$srcdir/zdns.1" "$pkgdir/usr/share/man/man1/zdns.1"
+    
+    # Install shell completions
+    install -Dm644 "$srcdir/zdns.bash" "$pkgdir/usr/share/bash-completion/completions/zdns"
+    install -Dm644 "$srcdir/zdns.zsh" "$pkgdir/usr/share/zsh/site-functions/_zdns"
+    
+    # Install license
+    install -Dm644 "$srcdir/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    
+    # Create directories
+    install -dm755 "$pkgdir/etc/zdns/certs"
+    install -dm755 "$pkgdir/var/lib/zdns"
+}

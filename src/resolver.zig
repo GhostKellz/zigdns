@@ -31,7 +31,7 @@ pub const Resolver = struct {
         var cache = DNSCache.init(allocator, 4096);
         var buf: [512]u8 = undefined;
 
-        std.log.info("ZenDNS listening on {s}", .{self.cfg.listen_addr});
+        std.log.info("ZigDNS listening on {s}", .{self.cfg.listen_addr});
 
         while (true) {
             var src_addr: std.net.Address = undefined;
@@ -97,7 +97,7 @@ fn parseDomainName(buf: []const u8, offset: usize) ![]const u8 {
 }
 
 fn log_event(msg: []const u8) void {
-    const log_path = "zendns.log";
+    const log_path = "zigdns.log";
     var file = std.fs.cwd().createFile(log_path, .{}) catch |err| {
         // If file exists, open it for appending
         if (err == error.PathAlreadyExists) {

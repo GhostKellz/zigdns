@@ -1,0 +1,35 @@
+[Unit]
+Description=ZigDNS - Advanced DNS Resolver with Web3 Support
+After=network.target
+Wants=network.target
+Documentation=man:zdns(1)
+
+[Service]
+Type=simple
+User=zdns
+Group=zdns
+ExecStart=/usr/bin/zdns start --daemon --quiet
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+
+# Security settings
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/etc/zdns /var/lib/zdns
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

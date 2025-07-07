@@ -1,0 +1,88 @@
+#!/bin/bash
+
+post_install() {
+    echo "==> Creating zdns user and group..."
+    if ! getent group zdns > /dev/null 2>&1; then
+        groupadd -r zdns
+    fi
+    if ! getent passwd zdns > /dev/null 2>&1; then
+        useradd -r -g zdns -d /var/lib/zdns -s /bin/false zdns
+    fi
+    
+    echo "==> Setting up zdns directories..."
+    chown -R zdns:zdns /var/lib/zdns
+    chown -R zdns:zdns /etc/zdns
+    chmod 750 /etc/zdns
+    chmod 755 /var/lib/zdns
+    
+    echo "==> Setting capabilities for zdns binary..."
+    setcap 'cap_net_bind_service=+ep' /usr/bin/zdns
+    
+    echo "==> ZigDNS installation complete!"
+    echo
+    echo "Quick start:"
+    echo "  sudo systemctl enable zdns"
+    echo "  sudo systemctl start zdns"
+    echo
+    echo "Or run directly:"
+    echo "  zdns start --port=5353"
+    echo
+    echo "Configuration file: /etc/zdns/config.toml"
+    echo "Documentation: /usr/share/doc/zdns/"
+    echo
+    echo "For help: zdns help"
+}
+
+post_upgrade() {
+    echo "==> Upgrading zdns..."
+    
+    # Stop service if running
+    if systemctl is-active --quiet zdns; then
+        echo "==> Stopping zdns service..."
+        systemctl stop zdns
+        _restart_after_upgrade=1
+    fi
+    
+    # Update capabilities
+    setcap 'cap_net_bind_service=+ep' /usr/bin/zdns
+    
+    # Restart service if it was running
+    if [[ $_restart_after_upgrade -eq 1 ]]; then
+        echo "==> Restarting zdns service..."
+        systemctl start zdns
+    fi
+    
+    echo "==> ZigDNS upgrade complete!"
+    echo "Check 'zdns version' for new features"
+}
+
+pre_remove() {
+    echo "==> Stopping zdns service..."
+    if systemctl is-active --quiet zdns; then
+        systemctl stop zdns
+    fi
+    if systemctl is-enabled --quiet zdns; then
+        systemctl disable zdns
+    fi
+}
+
+post_remove() {
+    echo "==> Cleaning up zdns installation..."
+    
+    # Remove user and group
+    if getent passwd zdns > /dev/null 2>&1; then
+        userdel zdns
+    fi
+    if getent group zdns > /dev/null 2>&1; then
+        groupdel zdns
+    fi
+    
+    # Clean up directories (but preserve config)
+    if [[ -d /var/lib/zdns ]]; then
+        rm -rf /var/lib/zdns
+    fi
+    
+    echo "==> ZigDNS removed!"
+    echo "Configuration preserved in /etc/zdns/"
+    echo "To completely remove: sudo rm -rf /etc/zdns"
+}

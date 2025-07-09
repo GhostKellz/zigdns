@@ -13,12 +13,6 @@ pub const Config = struct {
     enable_zero_copy: bool,
     max_concurrent_queries: usize,
     cache_size: usize,
-    
-    // TLS/Certificate configuration
-    cert_path: ?[]const u8,
-    key_path: ?[]const u8,
-    ca_path: ?[]const u8,
-    auto_generate_certs: bool,
 };
 
 pub fn loadConfig() !Config {
@@ -42,12 +36,6 @@ pub fn loadConfig() !Config {
         .enable_zero_copy = true,
         .max_concurrent_queries = 10000,
         .cache_size = 4096,
-        
-        // TLS/Certificate settings
-        .cert_path = null, // Will auto-generate if null
-        .key_path = null,
-        .ca_path = null,
-        .auto_generate_certs = true, // Generate self-signed certs for testing
     };
 }
 

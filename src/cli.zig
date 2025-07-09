@@ -1,5 +1,5 @@
 const std = @import("std");
-const simple_resolver = @import("./simple_resolver.zig");
+const simpleResolver = @import("./simpleResolver.zig");
 const config = @import("./config.zig");
 const blocklist = @import("./blocklist.zig");
 
@@ -257,14 +257,14 @@ fn queryDomain(allocator: std.mem.Allocator, cli_args: CliArgs) !void {
     // Simple DNS query simulation
     const cfg = try config.loadConfig();
     var bl = try blocklist.Blocklist.init(cfg, allocator);
-    var resolver = try simple_resolver.SimpleDNSResolver.init(allocator, cfg, &bl);
+    var resolver = try simpleResolver.SimpleDNSResolver.init(allocator, cfg, &bl);
     defer resolver.deinit();
     
     // Check if it's a Web3 domain
-    const web3_resolver = @import("./web3_resolver.zig");
-    if (web3_resolver.isWeb3Domain(domain)) {
+    const web3Resolver = @import("./web3Resolver.zig");
+    if (web3Resolver.isWeb3Domain(domain)) {
         try stdout.print("🌐 Web3 domain detected\n", .{});
-        var web3 = web3_resolver.Web3Resolver.init(allocator);
+        var web3 = web3Resolver.Web3Resolver.init(allocator);
         const resolution = try web3.resolveDomain(domain);
         if (resolution) |res| {
             try stdout.print("✅ Resolved via {s}:\n", .{res.resolver_type.toString()});
@@ -321,8 +321,8 @@ fn testWeb3(allocator: std.mem.Allocator, cli_args: CliArgs) !void {
         try stdout.print("================================\n", .{});
     }
     
-    const web3_resolver = @import("./web3_resolver.zig");
-    var web3 = web3_resolver.Web3Resolver.init(allocator);
+    const web3Resolver = @import("./web3Resolver.zig");
+    var web3 = web3Resolver.Web3Resolver.init(allocator);
     
     const test_domains = [_][]const u8{
         "vitalik.eth",

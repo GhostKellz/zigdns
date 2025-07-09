@@ -1,42 +1,34 @@
 const std = @import("std");
 const config = @import("./config.zig");
 const blocklist = @import("./blocklist.zig");
-const enhanced_resolver = @import("./enhanced_resolver.zig");
-const simple_resolver = @import("./simple_resolver.zig");
-const cli = @import("./cli.zig");
+const ZigResolver = @import("./ZigResolver.zig");
 
 pub fn main() !void {
+    const stdout = std.io.getStdOut().writer();
+    try stdout.print("🚀 ZigDNS v1.0.0 - Production DNS Resolver\n", .{});
+    try stdout.print("🎯 Mission: Replace Unbound with Superior Performance\n", .{});
+    try stdout.print("🔥 Features: SIMD, Hierarchical Cache, Intelligent LB, DNSSEC, Web3\n\n", .{});
+
     const allocator = std.heap.page_allocator;
+
+    const cfg = try config.loadConfig();
+    std.log.info("⚙️  Configuration loaded - Mode: {s}", .{cfg.mode});
     
-    // Parse command line arguments
-    const args = try std.process.argsAlloc(allocator);
-    defer std.process.argsFree(allocator, args);
+    var bl = try blocklist.Blocklist.init(cfg, allocator);
+    std.log.info("🛡️  Blocklist initialized with static entries", .{});
+
+    var resolver = try ZigResolver.ProductionDNSResolver.init(allocator, cfg);
+    defer resolver.deinit();
     
-    // Convert args to proper format
-    var converted_args = try allocator.alloc([]const u8, args.len);
-    defer allocator.free(converted_args);
-    for (args, 0..) |arg, i| {
-        converted_args[i] = arg;
-    }
+    // Set blocklist reference
+    resolver.blocklist = &bl;
     
-    const cli_args = cli.parseArgs(allocator, converted_args) catch |err| {
-        const stderr = std.io.getStdErr().writer();
-        try stderr.print("❌ Error parsing arguments: {}\n", .{err});
-        try stderr.print("Use 'zdns help' for usage information\n", .{});
-        std.process.exit(1);
-    };
-    
-    // If no command specified, default to start
-    const final_args = if (converted_args.len == 1) blk: {
-        var default_args = cli_args;
-        default_args.command = .start;
-        break :blk default_args;
-    } else cli_args;
-    
-    // Run the CLI command
-    cli.runCli(allocator, final_args) catch |err| {
-        const stderr = std.io.getStdErr().writer();
-        try stderr.print("❌ Error: {}\n", .{err});
-        std.process.exit(1);
-    };
+    std.log.info("🔥 ZigDNS v1.0.0 Production Resolver initialized", .{});
+    std.log.info("📊 Performance targets vs Unbound:", .{});
+    std.log.info("   ⚡ Queries/sec: 500k+ (vs 100k)", .{});
+    std.log.info("   💾 Memory: 20MB (vs 50MB)", .{});
+    std.log.info("   🚀 Startup: 200ms (vs 2s)", .{});
+    std.log.info("   🎯 Cache Hit: 95%+ (vs 85%)", .{});
+
+    try resolver.start();
 }
